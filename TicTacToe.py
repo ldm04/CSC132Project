@@ -95,24 +95,49 @@ class Game(Canvas):
         canvas.create_line(10, (h-100)/3+100, w-10, (h-100)/3+100)
         canvas.create_line(10, 2*(h-100)/3+100, w-10, 2*(h-100)/3+100)
         
-        # square one
-        s1 = Button(self, text = " ", width = 4, height = 1,\
-                    command = lambda: self.playX(s1, "red") if (self.turn%2 == 0)\
-                    else self.playO(s1, "blue"))
-        s1.configure(fg = "white", bg = "white", relief = FLAT,\
-                     font = ("Helvetica", 45))
-        s1_window = canvas.create_window(10, 110, anchor = NW, window = s1)
+        # create squares
+        s1 = None
+        s2 = None
+        s3 = None
+        s4 = None
+        s5 = None
+        s6 = None
+        s7 = None
+        s8 = None
+        s9 = None
+        self.createSquare(s1, w/6+5, 90+h/6, game, canvas)
+        self.createSquare(s2, w/2, 90+h/6, game, canvas)
+        self.createSquare(s3, 5*w/6-5, 90+h/6, game, canvas)
+        self.createSquare(s4, w/6+5, 50+h/2, game, canvas)
+        self.createSquare(s5, w/2, 50+h/2, game, canvas)
+        self.createSquare(s6, 5*w/6-5, 50+h/2, game, canvas)
+        self.createSquare(s7, w/6+5, 10+5*h/6, game, canvas)
+        self.createSquare(s8, w/2, 10+5*h/6, game, canvas)
+        self.createSquare(s9, 5*w/6-5, 10+5*h/6, game, canvas)
 
-        # rest of squares
+    # creates squares as blank buttons
+    def createSquare(self, s, x, y, game, canvas):
+        if game == "Tic-Tac-Toe":
+            s = Button(self, text = " ", width = 4, height = 1,\
+                       command = lambda: self.playX(s, "red")\
+                       if (self.turn%2 == 0) else self.playO(s, "blue"))
+        else:
+            s = Button(self, text = " ", width = 4, height = 1,\
+                        command = lambda: self.playX(s, "red"))
+        s.configure(fg = "white", bg = "white", relief = FLAT,\
+                    font = ("Helvetica", 45))
+        s_window = canvas.create_window(x, y, anchor = CENTER, window = s)
 
     # fills in button with X
     def playX(self, s, color):
-        s.configure(text = "X", fg = color)
+        s.configure(text = "X", disabledforeground = color)
+        s["state"] = DISABLED
         self.turn += 1
 
     # fills in button with O
     def playO(self, s, color):
-        s.configure(text = "O", fg = color)
+        s.configure(text = "O", disabledforeground = color)
+        s["state"] = DISABLED
         self.turn += 1
 
 # dimensions of the GUI
