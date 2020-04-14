@@ -96,27 +96,18 @@ class Game(Canvas):
         canvas.create_line(10, 2*(h-100)/3+100, w-10, 2*(h-100)/3+100)
         
         # create squares
-        s1 = None
-        s2 = None
-        s3 = None
-        s4 = None
-        s5 = None
-        s6 = None
-        s7 = None
-        s8 = None
-        s9 = None
-        self.createSquare(s1, w/6+5, 90+h/6, game, canvas)
-        self.createSquare(s2, w/2, 90+h/6, game, canvas)
-        self.createSquare(s3, 5*w/6-5, 90+h/6, game, canvas)
-        self.createSquare(s4, w/6+5, 50+h/2, game, canvas)
-        self.createSquare(s5, w/2, 50+h/2, game, canvas)
-        self.createSquare(s6, 5*w/6-5, 50+h/2, game, canvas)
-        self.createSquare(s7, w/6+5, 10+5*h/6, game, canvas)
-        self.createSquare(s8, w/2, 10+5*h/6, game, canvas)
-        self.createSquare(s9, 5*w/6-5, 10+5*h/6, game, canvas)
+        s1 = self.createSquare(w/6+5, 90+h/6, game, canvas)
+        s2 = self.createSquare(w/2, 90+h/6, game, canvas)
+        s3 = self.createSquare(5*w/6-5, 90+h/6, game, canvas)
+        s4 = self.createSquare(w/6+5, 50+h/2, game, canvas)
+        s5 = self.createSquare(w/2, 50+h/2, game, canvas)
+        s6 = self.createSquare(5*w/6-5, 50+h/2, game, canvas)
+        s7 = self.createSquare(w/6+5, 10+5*h/6, game, canvas)
+        s8 = self.createSquare(w/2, 10+5*h/6, game, canvas)
+        s9 = self.createSquare(5*w/6-5, 10+5*h/6, game, canvas)
 
     # creates squares as blank buttons
-    def createSquare(self, s, x, y, game, canvas):
+    def createSquare(self, x, y, game, canvas):
         if game == "Tic-Tac-Toe":
             s = Button(self, text = " ", width = 4, height = 1,\
                        command = lambda: self.playX(s, "red")\
@@ -127,6 +118,8 @@ class Game(Canvas):
         s.configure(fg = "white", bg = "white", relief = FLAT,\
                     font = ("Helvetica", 45))
         s_window = canvas.create_window(x, y, anchor = CENTER, window = s)
+
+        return s
 
     # fills in button with X
     def playX(self, s, color):
