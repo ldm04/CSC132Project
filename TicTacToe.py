@@ -11,6 +11,9 @@ class Game(Canvas):
         self.userPoints = 0
         self.ties = 0
         self.cpuPoints = 0
+        # dictionary of spaces and their value
+        self.spaces = { "s1":" ", "s2":" ", "s3":" ", "s4":" ", "s5":" ",\
+                        "s6":" ", "s7": " ", "s8":" ", "s9":" "}
 
     def mainmenu(self, w, h):
         # create canvas
@@ -75,17 +78,17 @@ class Game(Canvas):
         title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
         title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
 
-        user = Label(self, text = "You: {}".format(self.userPoints))
-        user.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
-        user_window = canvas.create_window(w/4, 77, anchor = CENTER, window = user)
+        cpu = Label(self, text = "CPU: {}".format(self.userPoints))
+        cpu.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
+        cpu_window = canvas.create_window(w/4, 77, anchor = CENTER, window = cpu)
 
         tie = Label(self, text = "Draws: {}".format(self.ties))
         tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
         tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
 
-        cpu = Label(self, text = "CPU: {}".format(self.cpuPoints))
-        cpu.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
-        cpu_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = cpu)
+        user = Label(self, text = "You: {}".format(self.cpuPoints))
+        user.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
+        user_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = user)
 
         # create vertical lines
         canvas.create_line(w/3, 110, w/3, h-10)
@@ -96,25 +99,25 @@ class Game(Canvas):
         canvas.create_line(10, 2*(h-100)/3+100, w-10, 2*(h-100)/3+100)
         
         # create squares
-        s1 = self.createSquare(w/6+5, 90+h/6, game, canvas)
-        s2 = self.createSquare(w/2, 90+h/6, game, canvas)
-        s3 = self.createSquare(5*w/6-5, 90+h/6, game, canvas)
-        s4 = self.createSquare(w/6+5, 50+h/2, game, canvas)
-        s5 = self.createSquare(w/2, 50+h/2, game, canvas)
-        s6 = self.createSquare(5*w/6-5, 50+h/2, game, canvas)
-        s7 = self.createSquare(w/6+5, 10+5*h/6, game, canvas)
-        s8 = self.createSquare(w/2, 10+5*h/6, game, canvas)
-        s9 = self.createSquare(5*w/6-5, 10+5*h/6, game, canvas)
+        s1 = self.createSquare(w/6+5, 90+h/6, game, canvas, "s1")
+        s2 = self.createSquare(w/2, 90+h/6, game, canvas, "s2")
+        s3 = self.createSquare(5*w/6-5, 90+h/6, game, canvas, "s3")
+        s4 = self.createSquare(w/6+5, 50+h/2, game, canvas, "s4")
+        s5 = self.createSquare(w/2, 50+h/2, game, canvas, "s5")
+        s6 = self.createSquare(5*w/6-5, 50+h/2, game, canvas, "s6")
+        s7 = self.createSquare(w/6+5, 10+5*h/6, game, canvas, "s7")
+        s8 = self.createSquare(w/2, 10+5*h/6, game, canvas, "s8")
+        s9 = self.createSquare(5*w/6-5, 10+5*h/6, game, canvas, "s9")
 
     # creates squares as blank buttons
-    def createSquare(self, x, y, game, canvas):
+    def createSquare(self, x, y, game, canvas, dictS):
         if game == "Tic-Tac-Toe":
             s = Button(self, text = " ", width = 4, height = 1,\
-                       command = lambda: self.playX(s, "red")\
-                       if (self.turn%2 == 0) else self.playO(s, "blue"))
+                       command = lambda: self.playX(s, "red", dictS, canvas, game, x, y)\
+                       if (self.turn%2 == 0) else self.playO(s, "blue", dictS, canvas, game, x, y))
         else:
             s = Button(self, text = " ", width = 4, height = 1,\
-                        command = lambda: self.playX(s, "red"))
+                        command = lambda: self.playX(s, "red", dictS, canvas, game, x, y))
         s.configure(fg = "white", bg = "white", relief = FLAT,\
                     font = ("Helvetica", 45))
         s_window = canvas.create_window(x, y, anchor = CENTER, window = s)
@@ -122,17 +125,135 @@ class Game(Canvas):
         return s
 
     # fills in button with X
-    def playX(self, s, color):
+    def playX(self, s, color, dictS, canvas, game, w, h):
         s.configure(text = "X", disabledforeground = color)
         s["state"] = DISABLED
+        self.spaces[dictS] = "X"
+        self.checkWin(dictS, canvas, game, w, h)
         self.turn += 1
 
     # fills in button with O
-    def playO(self, s, color):
+    def playO(self, s, color, dictS, canvas, game, w, h):
         s.configure(text = "O", disabledforeground = color)
         s["state"] = DISABLED
+        self.spaces[dictS] = "O"
+        self.checkWin(dictS, canvas, game, w, h)
         self.turn += 1
 
+    # check for win
+    def checkWin(self, dictS, canvas, game, w, h):
+        if self.spaces[dictS] == "X":
+            state = self.findThreeInRow(dictS, "X")
+        else:
+            state = self.findThreeInRow(dictS, "O")
+
+        if state == "win":
+            if game == "Tic-Tac-Toe":
+                if self.turn%2 == 0:
+                    self.cpuPoints += 1
+                    result = Label(self, text = "THE CPU WINS")
+                    result.configure(width = 13, bg = "white", fg = "red", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+                else:
+                    self.userPoints += 1
+                    self.cpuPoints += 1
+                    result = Label(self, text = "YOU WIN")
+                    result.configure(width = 8, bg = "white", fg = "blue", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+            else:
+                if self.turn%2 == 0:
+                    self.cpuPoints += 1
+                    result = Label(self, text = "THE CPU LOSES")
+                    result.configure(width = 14, bg = "white", fg = "red", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+                else:
+                    self.userPoints += 1
+                    self.cpuPoints += 1
+                    result = Label(self, text = "YOU LOSE")
+                    result.configure(width = 9, bg = "white", fg = "blue", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+        else:
+            if " " in self.spaces.values():
+                pass
+            else:
+                self.ties += 1
+                result = Label(self, text = "IT'S A TIE")
+                result.configure(width = 9, bg = "white", fg = "black", font = ("Helvetica", 30))
+                result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+
+    # find three in a row
+    def findThreeInRow(self, dictS, value):
+        # check all possible three in a rows with space one
+        if dictS == "s1":
+            if (self.spaces["s2"] == value and self.spaces["s3"] == value)\
+               or (self.spaces["s4"] == value and self.spaces["s7"] == value)\
+               or (self.spaces["s5"] == value and self.spaces["s9"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space two
+        elif dictS == "s2":
+            if (self.spaces["s1"] == value and self.spaces["s3"] == value)\
+               or (self.spaces["s5"] == value and self.spaces["s8"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space three
+        elif dictS == "s3":
+            if (self.spaces["s1"] == value and self.spaces["s2"] == value)\
+               or (self.spaces["s6"] == value and self.spaces["s9"] == value)\
+               or (self.spaces["s5"] == value and self.spaces["s7"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space four
+        elif dictS == "s4":
+            if (self.spaces["s5"] == value and self.spaces["s6"] == value)\
+               or (self.spaces["s1"] == value and self.spaces["s7"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space five
+        elif dictS == "s5":
+            if (self.spaces["s4"] == value and self.spaces["s6"] == value)\
+               or (self.spaces["s2"] == value and self.spaces["s8"] == value)\
+               or (self.spaces["s1"] == value and self.spaces["s9"] == value)\
+               or (self.spaces["s3"] == value and self.spaces["s7"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space six
+        elif dictS == "s6":
+            if (self.spaces["s4"] == value and self.spaces["s5"] == value)\
+               or (self.spaces["s3"] == value and self.spaces["s9"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space seven
+        elif dictS == "s7":
+            if (self.spaces["s8"] == value and self.spaces["s9"] == value)\
+               or (self.spaces["s1"] == value and self.spaces["s4"] == value)\
+               or (self.spaces["s3"] == value and self.spaces["s5"] == value):
+                state = "win"
+            else:
+                state = "na"
+        # check all possible three in a rows with space eight
+        elif dictS == "s8":
+            if (self.spaces["s7"] == value and self.spaces["s9"] == value)\
+               or (self.spaces["s2"] == value and self.spaces["s5"] == value):
+                state = "win"
+            else:
+                state = "na"
+        else:
+            if (self.spaces["s7"] == value and self.spaces["s8"] == value)\
+               or (self.spaces["s3"] == value and self.spaces["s6"] == value)\
+               or (self.spaces["s1"] == value and self.spaces["s5"] == value):
+                state = "win"
+            else:
+                state = "na"
+
+        return state
+        
 # dimensions of the GUI
 WIDTH = 500
 HEIGHT = 500
