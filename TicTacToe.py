@@ -99,6 +99,7 @@ class Game(Canvas):
         canvas.create_line(10, 2*(h-100)/3+100, w-10, 2*(h-100)/3+100)
         
         # create squares
+        global s1, s2, s3, s4, s5, s6, s7, s8, s9
         s1 = self.createSquare(w/6+5, 90+h/6, game, canvas, "s1")
         s2 = self.createSquare(w/2, 90+h/6, game, canvas, "s2")
         s3 = self.createSquare(5*w/6-5, 90+h/6, game, canvas, "s3")
@@ -108,6 +109,9 @@ class Game(Canvas):
         s7 = self.createSquare(w/6+5, 10+5*h/6, game, canvas, "s7")
         s8 = self.createSquare(w/2, 10+5*h/6, game, canvas, "s8")
         s9 = self.createSquare(5*w/6-5, 10+5*h/6, game, canvas, "s9")
+
+        # cpu plays in top left corner always on first turn
+        self.playX(s1, "red", "s1", canvas, game, w, h)
 
     # creates squares as blank buttons
     def createSquare(self, x, y, game, canvas, dictS):
@@ -124,6 +128,128 @@ class Game(Canvas):
 
         return s
 
+    # the cpu plays by filling in button with X
+    def playCPU(self, canvas, game, w, h):
+        # finds where to play on cpu's second turn
+        if self.turn == 2:
+            if (self.spaces["s2"] == "O") or (self.spaces["s4"] == "O")\
+               or (self.spaces["s6"] == "O") or (self.spaces["s8"] == "O"):
+                self.playX(s5, "red", "s5", canvas, game, w, h)
+            elif (self.spaces["s7"] == "O") or (self.spaces["s9"] == "O"):
+                self.playX(s3, "red", "s3", canvas, game, w, h)
+            elif self.spaces["s3"] == "O":
+                self.playX(s7, "red", "s7", canvas, game, w, h)
+            else:
+                self.playX(s9, "red", "s9", canvas, game, w, h)
+        # finds where to play on cpu's third turn
+        elif self.turn == 4:
+            if self.spaces["s1"] == "X" and self.spaces["s5"] == "X":
+                if self.spaces["s9"] == " ":
+                    self.playX(s9, "red", "s9", canvas, game, w, h)
+                elif self.spaces["s2"] == "O" or self.spaces["s8"] == "O":
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+                else:
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+            elif self.spaces["s1"] == "X" and self.spaces["s3"] == "X":
+                if self.spaces["s2"] == " ":
+                    self.playX(s2, "red", "s2", canvas, game, w, h)
+                elif self.spaces["s7"] == "O":
+                    self.playX(s9, "red", "s9", canvas, game, w, h)
+                else:
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+            elif self.spaces["s1"] == "X" and self.spaces["s7"] == "X":
+                if self.spaces["s4"] == " ":
+                    self.playX(s4, "red", "s4", canvas, game, w, h)
+                else:
+                    self.playX(s9, "red", "s9", canvas, game, w, h)
+            else:
+                if self.spaces["s2"] == "O":
+                    self.playX(s8, "red", "s8", canvas, game, w, h)
+                elif self.spaces["s3"] == "O":
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+                elif self.spaces["s4"] == "O":
+                    self.playX(s6, "red", "s6", canvas, game, w, h)
+                elif self.spaces["s6"] == "O":
+                    self.playX(s4, "red", "s4", canvas, game, w, h)
+                elif self.spaces["s7"] == "O":
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+                else:
+                    self.playX(s2, "red", "s2", canvas, game, w, h)
+        # finds where to play on cpu's fourth turn
+        elif self.turn == 6:
+            if (self.spaces["s1"] == "X") and (self.spaces["s5"] == "X")\
+               and (self.spaces["s7"] == "X"):
+                if self.spaces["s4"] == " ":
+                    self.playX(s4, "red", "s4", canvas, game, w, h)
+                else:
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s9"] == "X")\
+               and (self.spaces["s7"] == "X"):
+                if self.spaces["s8"] == " ":
+                    self.playX(s8, "red", "s8", canvas, game, w, h)
+                else:
+                    self.playX(s5, "red", "s5", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s5"] == "X")\
+               and (self.spaces["s3"] == "X"):
+                if self.spaces["s2"] == " ":
+                    self.playX(s2, "red", "s2", canvas, game, w, h)
+                else:
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s3"] == "X")\
+               and (self.spaces["s9"] == "X"):
+                if self.spaces["s6"] == " ":
+                    self.playX(s6, "red", "s6", canvas, game, w, h)
+                else:
+                    self.playX(s5, "red", "s5", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s5"] == "X")\
+               and (self.spaces["s7"] == "X"):
+                if self.spaces["s4"] == " ":
+                    self.playX(s4, "red", "s4", canvas, game, w, h)
+                else:
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s3"] == "X")\
+               and (self.spaces["s7"] == "X"):
+                if self.spaces["s4"] == " ":
+                    self.playX(s4, "red", "s4", canvas, game, w, h)
+                else:
+                    self.playX(s5, "red", "s5", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s9"] == "X")\
+               and (self.spaces["s8"] == "X"):
+                if self.spaces["s7"] == " ":
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+                else:
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s9"] == "X")\
+               and (self.spaces["s6"] == "X"):
+                if self.spaces["s3"] == " ":
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+                else:
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+            elif (self.spaces["s1"] == "X") and (self.spaces["s9"] == "X")\
+               and (self.spaces["s4"] == "X"):
+                if self.spaces["s7"] == " ":
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+                else:
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+            else:
+                if self.spaces["s3"] == " ":
+                    self.playX(s3, "red", "s3", canvas, game, w, h)
+                else:
+                    self.playX(s7, "red", "s7", canvas, game, w, h)
+        # finds last empty square and plays there
+        else:
+            for space in self.spaces:
+                if self.spaces[space] == " ":
+                    lastSpace = space
+            if lastSpace == "s2":
+                self.playX(s2, "red", "s2", canvas, game, w, h)
+            elif lastSpace == "s4":
+                self.playX(s4, "red", "s4", canvas, game, w, h)
+            elif lastSpace == "s6":
+                self.playX(s6, "red", "s6", canvas, game, w, h)
+            else:
+                self.playX(s8, "red", "s8", canvas, game, w, h)
+                
     # fills in button with X
     def playX(self, s, color, dictS, canvas, game, w, h):
         s.configure(text = "X", disabledforeground = color)
@@ -139,6 +265,7 @@ class Game(Canvas):
         self.spaces[dictS] = "O"
         self.checkWin(dictS, canvas, game, w, h)
         self.turn += 1
+        self.playCPU(canvas, game, w, h)
 
     # check for win
     def checkWin(self, dictS, canvas, game, w, h):
