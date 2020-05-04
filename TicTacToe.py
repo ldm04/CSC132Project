@@ -16,6 +16,7 @@ class Game(Canvas):
                         "s6":" ", "s7": " ", "s8":" ", "s9":" "}
 
     def mainmenu(self, w, h):
+        self.pack(fill=BOTH, expand=1)
         # create canvas
         canvas = Canvas(self, relief = FLAT, background = "white", \
                          width = w, height = h)
@@ -59,11 +60,13 @@ class Game(Canvas):
         d4_window = canvas.create_window(3*w/4, 43*h/64, anchor = CENTER, window = d4)
 
     def tictactoe(self, w, h, canvas):
+        canvas.pack(side = TOP, anchor = NW)
         # create tic tac toe grid
         game = "Tic-Tac-Toe"
         self.createGrid(canvas, w, h, game)
 
     def misere(self, w, h, canvas):
+        canvas.pack(side = TOP, anchor = NW)
         # create tic tac toe grid
         game = "Misere"
         self.createGrid(canvas, w, h, game)
@@ -71,14 +74,19 @@ class Game(Canvas):
     def createGrid(self, canvas, w, h, game):
         # clear canvas and reset turn counter
         canvas.delete("all")
+        canvas.pack(side = TOP, anchor = NW)
         self.turn = 0
+
+        # clear spaces dictionary
+        for space in self.spaces:
+            self.spaces[space] = " "
         
         # create scoreboard
         title = Label(self, text = game)
         title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
         title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
 
-        cpu = Label(self, text = "CPU: {}".format(self.userPoints))
+        cpu = Label(self, text = "CPU: {}".format(self.cpuPoints))
         cpu.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
         cpu_window = canvas.create_window(w/4, 77, anchor = CENTER, window = cpu)
 
@@ -86,7 +94,7 @@ class Game(Canvas):
         tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
         tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
 
-        user = Label(self, text = "You: {}".format(self.cpuPoints))
+        user = Label(self, text = "You: {}".format(self.userPoints))
         user.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
         user_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = user)
 
@@ -117,12 +125,12 @@ class Game(Canvas):
             self.playX(s5, "red", "s5", canvas, game, w, h)
 
     # creates squares as blank buttons
-    def createSquare(self, x, y, game, canvas, dictS):
+    def createSquare(self, w, h, game, canvas, dictS):
         s = Button(self, text = " ", width = 4, height = 1,\
-                    command = lambda: self.playO(s, "blue", dictS, canvas, game, x, y))
+                    command = lambda: self.playO(s, "blue", dictS, canvas, game, w, h))
         s.configure(fg = "white", bg = "white", relief = FLAT,\
                     font = ("Helvetica", 45))
-        s_window = canvas.create_window(x, y, anchor = CENTER, window = s)
+        s_window = canvas.create_window(w, h, anchor = CENTER, window = s)
 
         return s
 
@@ -272,9 +280,9 @@ class Game(Canvas):
         s.configure(text = "X", disabledforeground = color)
         s["state"] = DISABLED
         self.spaces[dictS] = "X"
-        state = self.checkWin(dictS, canvas, game, w, h)
+        result, state = self.checkWin(dictS, canvas, game, w, h)
         if (state == "win" or state == "tie"):
-            self.replay(canvas, game, w, h)
+            self.replay(canvas, game, w, h, result)
         else:
             self.turn += 1
 
@@ -283,9 +291,9 @@ class Game(Canvas):
         s.configure(text = "O", disabledforeground = color)
         s["state"] = DISABLED
         self.spaces[dictS] = "O"
-        state = self.checkWin(dictS, canvas, game, w, h)
+        result, state = self.checkWin(dictS, canvas, game, w, h)
         if (state == "win" or state == "tie"):
-            self.replay(canvas, game, w, h)
+            self.replay(canvas, game, w, h, result)
         else:
             self.turn += 1
             if (game == "Misere" and self.turn%2 == 0):
@@ -295,6 +303,10 @@ class Game(Canvas):
 
     # check for win
     def checkWin(self, dictS, canvas, game, w, h):
+        if self.turn%2 == 0:
+            state = False
+            result = False
+            
         if self.spaces[dictS] == "X":
             state = self.findThreeInRow(dictS, "X")
         else:
@@ -325,7 +337,7 @@ class Game(Canvas):
                     result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
         else:
             if " " in self.spaces.values():
-                pass
+                result = False
             else:
                 state = "tie"
                 self.ties += 1
@@ -333,7 +345,7 @@ class Game(Canvas):
                 result.configure(width = 9, bg = "white", fg = "black", font = ("Helvetica", 30))
                 result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
 
-        return state
+        return result, state
     
     # find three in a row
     def findThreeInRow(self, dictS, value):
@@ -409,14 +421,49 @@ class Game(Canvas):
         return state
 
     # asks user if they want to replay
-    # not functional yet
-    def replay(self, canvas, game, w, h):
-##        o1 = Button(self, text = "Play Again", width = 10, height = 1,\
-##                    command = lambda: self.tictactoe(w, h, canvas))
-##        o1.configure(fg = "black", bg = "white", relief = FLAT,\
-##                    font = ("Helvetica", 30))
-##        o1_window = canvas.create_window(w/2, 3*h/4, anchor = CENTER, window = o1)
-        pass
+    def replay(self, canvas, game, w, h, result):
+        w = WIDTH
+        h = HEIGHT
+        o1 = Button(self, text = "Play Again", width = 8, height = 1,\
+                    command = lambda: self.createGrid(canvas, w, h, game))
+        o1.configure(fg = "black", bg = "white", relief = FLAT,\
+                    font = ("Helvetica", 30))
+        o1_window = canvas.create_window(w/4, 3*h/4, anchor = CENTER, window = o1)
+
+        o2 = Button(self, text = "More Options", width = 10, height = 1)
+        o2.configure(fg = "black", bg = "white", relief = FLAT,\
+                    font = ("Helvetica", 30), command = lambda: \
+                     self.moreOptions(canvas, w, h, game, o1, o2))
+        o2_window = canvas.create_window(3*w/4, 3*h/4, anchor = CENTER, window = o2)
+
+    # gives user more post-game options
+    def moreOptions(self, canvas, w, h, game, o1, o2):
+        o2.destroy()
+        if game == "Tic-Tac-Toe":
+            game = "Misere"
+        else:
+            game= "Tic-Tac-Toe"
+
+        if game == "Misere":
+            textGame = game
+        else:
+            textGame = "T. T. T."
+        
+        o1.configure(text = "Play {}".format(textGame), width = 10, command = lambda: \
+                     self.createGrid(canvas, w, h, game))
+        
+        o3 = Button(self, text = "Quit", width = 3, height = 1, command = lambda: \
+                    self.quit(canvas, w, h))
+        o3.configure(fg = "black", bg = "white", relief = FLAT,\
+                    font = ("Helvetica", 30))
+        o3_window = canvas.create_window(3*w/4, 3*h/4, anchor = CENTER, window = o3)
+
+    # clears canvas and tells user to quit
+    def quit(self, canvas, w, h):
+        canvas.delete("all")
+        Label1 = Label(self, text = "You can exit the program now.")
+        Label1.configure(width = 28, bg = "white", fg = "black", font = ("Helvetica", 25))
+        Label1_window = canvas.create_window(w/2, h/2, anchor = CENTER, window = Label1)
     
 # dimensions of the GUI
 WIDTH = 500
