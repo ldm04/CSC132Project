@@ -11,6 +11,7 @@ class Game(Canvas):
         self.userPoints = 0
         self.ties = 0
         self.cpuPoints = 0
+        self.Player2Points = 0
         # dictionary of spaces and their value
         self.spaces = { "s1":" ", "s2":" ", "s3":" ", "s4":" ", "s5":" ",\
                         "s6":" ", "s7": " ", "s8":" ", "s9":" "}
@@ -42,9 +43,13 @@ class Game(Canvas):
         b2.configure(width = 10, activebackground = "gray", relief = FLAT, font = ("Helvetica", 20))
         b2_window = canvas.create_window(3*w/4, h/2, anchor = CENTER, window = b2)
 
-##        b3 = Button(self, text = "Misere", command = lambda: self.misere(w, h, canvas))
-##        b3.configure(width = 10, activebackground = "gray", relief = FLAT, font = ("Helvetica", 20))
-##        b3_window = canvas.create_window(3*w/4, h/2, anchor = CENTER, window = b2)
+        b3 = Button(self, text = "Tic Tac Toe (PvP)", command = lambda: self.PvPtictactoe(w, h, canvas))
+        b3.configure(width = 20, activebackground = "gray", relief = FLAT, font = ("Helvetica", 10))
+        b3_window = canvas.create_window(w/4, 3*h/4, anchor = CENTER, window = b3)
+
+        b4 = Button(self, text = "Misere (PvP)", command = lambda: self.PvPmisere(w, h, canvas))
+        b4.configure(width = 20, activebackground = "gray", relief = FLAT, font = ("Helvetica", 10))
+        b4_window = canvas.create_window(3*w/4, 3*h/4, anchor = CENTER, window = b4)
 
         # game descriptions
         d1 = Label(self, text = "Traditional X and O rules,")
@@ -98,42 +103,42 @@ class Game(Canvas):
             self.spaces[space] = " "
         
         # create scoreboard
-##        if game == "Tic-Tac-Toe" or game == "Misere":
-##            #run this scoreboard for CPU games
-        title = Label(self, text = game)
-        title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
-        title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
+        if game == "Tic-Tac-Toe" or game == "Misere":
+            #run this scoreboard for CPU games
+            title = Label(self, text = game)
+            title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
+            title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
 
-        cpu = Label(self, text = "CPU: {}".format(self.cpuPoints))
-        cpu.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
-        cpu_window = canvas.create_window(w/4, 77, anchor = CENTER, window = cpu)
+            cpu = Label(self, text = "CPU: {}".format(self.cpuPoints))
+            cpu.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
+            cpu_window = canvas.create_window(w/4, 77, anchor = CENTER, window = cpu)
 
-        tie = Label(self, text = "Draws: {}".format(self.ties))
-        tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
-        tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
+            tie = Label(self, text = "Draws: {}".format(self.ties))
+            tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
+            tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
 
-        user = Label(self, text = "You: {}".format(self.userPoints))
-        user.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
-        user_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = user)
+            user = Label(self, text = "You: {}".format(self.userPoints))
+            user.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
+            user_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = user)
 
         #Scoreboard for PvP games
 
-##        if game == "Tic-Tac-Toe (PvP)" or game == "Misere (PvP)":
-##            title = Label(self, text = game)
-##            title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
-##            title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
-##
-##            Player2 = Label(self, text = "Player 2: {}".format(self.Player2Points))
-##            Player2.configure(width = 7, bg = "white", fg = "red", font = ("Helvetica", 20))
-##            Player2_window = canvas.create_window(w/4, 77, anchor = CENTER, window = Player2)
-##
-##            tie = Label(self, text = "Draws: {}".format(self.ties))
-##            tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
-##            tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
-##
-##            user = Label(self, text = "You: {}".format(self.userPoints))
-##            user.configure(width = 7, bg = "white", fg = "blue", font = ("Helvetica", 20))
-##            user_window = canvas.create_window(3*w/4, 77, anchor = CENTER, window = user)
+        if game == "Tic-Tac-Toe (PvP)" or game == "Misere (PvP)":
+            title = Label(self, text = game)
+            title.configure(width = 50, bg = "blue", fg = "red", font = ("Helvetica", 40))
+            title_window = canvas.create_window(w/2, 25, anchor = CENTER, window = title)
+
+            Player2 = Label(self, text = "Player Two: {}".format(self.Player2Points))
+            Player2.configure(width = 10, bg = "white", fg = "red", font = ("Helvetica", 20))
+            Player2_window = canvas.create_window(3*w/16, 77, anchor = CENTER, window = Player2)
+
+            tie = Label(self, text = "Draws: {}".format(self.ties))
+            tie.configure(width = 8, bg = "white", fg = "black", font = ("Helvetica", 20))
+            tie_window = canvas.create_window(w/2, 77, anchor = CENTER, window = tie)
+
+            user = Label(self, text = "Player One: {}".format(self.userPoints))
+            user.configure(width = 10, bg = "white", fg = "blue", font = ("Helvetica", 20))
+            user_window = canvas.create_window(13*w/16, 77, anchor = CENTER, window = user)
         
 
         # create vertical lines
@@ -157,15 +162,17 @@ class Game(Canvas):
         s9 = self.createSquare(5*w/6-5, 10+5*h/6, game, canvas, "s9")
 
         # cpu plays in top left corner always on first turn
-        if game == "Tic-Tac-Toe":
-            self.playX(s1, "red", "s1", canvas, game, w, h)
-        else:
-            self.playX(s5, "red", "s5", canvas, game, w, h)
+        if game == "Tic-Tac-Toe" or game == "Misere":
+            if game == "Tic-Tac-Toe":
+                self.playX(s1, "red", "s1", canvas, game, w, h)
+            else:
+                self.playX(s5, "red", "s5", canvas, game, w, h)
 
     # creates squares as blank buttons
     def createSquare(self, w, h, game, canvas, dictS):
         s = Button(self, text = " ", width = 4, height = 1,\
-                    command = lambda: self.playO(s, "blue", dictS, canvas, game, w, h))
+                    command = lambda: self.playX(s, "red", dictS, canvas, game, w, h)\
+                    if self.turn%2 == 0 else self.playO(s, "blue", dictS, canvas, game, w, h))
         s.configure(fg = "white", bg = "white", relief = FLAT,\
                     font = ("Helvetica", 45))
         s_window = canvas.create_window(w, h, anchor = CENTER, window = s)
@@ -334,10 +341,11 @@ class Game(Canvas):
             self.replay(canvas, game, w, h, result)
         else:
             self.turn += 1
-            if (game == "Misere" and self.turn%2 == 0):
-                self.playCPUM(canvas, game, w, h, dictS)
-            else:
-                self.playCPUT(canvas, game, w, h)
+            if game == "Tic-Tac-Toe" or game == "Misere":
+                if (game == "Misere" and self.turn%2 == 0):
+                    self.playCPUM(canvas, game, w, h, dictS)
+                else:
+                    self.playCPUT(canvas, game, w, h)
 
     # check for win
     def checkWin(self, dictS, canvas, game, w, h):
@@ -352,7 +360,16 @@ class Game(Canvas):
 
         if state == "win":
             #disable all grid squares if game is over
-##            s["state"] = DISABLED
+            s1["state"] = DISABLED
+            s2["state"] = DISABLED
+            s3["state"] = DISABLED
+            s4["state"] = DISABLED
+            s5["state"] = DISABLED
+            s6["state"] = DISABLED
+            s7["state"] = DISABLED
+            s8["state"] = DISABLED
+            s9["state"] = DISABLED
+            
             if game == "Tic-Tac-Toe":
                 if self.turn%2 == 0:
                     self.cpuPoints += 1
@@ -364,7 +381,7 @@ class Game(Canvas):
                     result = Label(self, text = "YOU WIN")
                     result.configure(width = 8, bg = "white", fg = "blue", font = ("Helvetica", 30))
                     result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
-            else:
+            elif game == "Misere":
                 if self.turn%2 == 0:
                     self.userPoints += 1
                     result = Label(self, text = "THE CPU LOSES")
@@ -374,6 +391,28 @@ class Game(Canvas):
                     self.cpuPoints += 1
                     result = Label(self, text = "YOU LOSE")
                     result.configure(width = 9, bg = "white", fg = "red", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+            elif game == "Tic-Tac-Toe (PvP)":
+                if self.turn%2 == 0:
+                    self.Player2Points += 1
+                    result = Label(self, text = "PLAYER TWO WINS")
+                    result.configure(width = 18, bg = "white", fg = "red", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+                else:
+                    self.userPoints += 1
+                    result = Label(self, text = "PLAYER ONE WINS")
+                    result.configure(width = 18, bg = "white", fg = "blue", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+            else:
+                if self.turn%2 == 0:
+                    self.userPoints += 1
+                    result = Label(self, text = "PLAYER TWO LOSES")
+                    result.configure(width = 18, bg = "white", fg = "blue", font = ("Helvetica", 30))
+                    result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
+                else:
+                    self.Player2Points += 1
+                    result = Label(self, text = "PLAYER ONE LOSES")
+                    result.configure(width = 18, bg = "white", fg = "red", font = ("Helvetica", 30))
                     result_window = canvas.create_window(250, 250, anchor = CENTER, window = result)
         else:
             if " " in self.spaces.values():
@@ -481,12 +520,15 @@ class Game(Canvas):
         o2.destroy()
         if game == "Tic-Tac-Toe":
             game = "Misere"
+            textGame = "Misere"
+        elif game == "Misere":
+            game = "Tic-Tac-Toe"
+            textGame = "T. T. T."
+        elif game == "Tic-Tac-Toe (PvP)":
+            game = "Misere (PvP)"
+            textGame = "Misere"
         else:
-            game= "Tic-Tac-Toe"
-
-        if game == "Misere":
-            textGame = game
-        else:
+            game = "Tic-Tac-Toe (PvP)"
             textGame = "T. T. T."
         
         o1.configure(text = "Play {}".format(textGame), width = 10, command = lambda: \
